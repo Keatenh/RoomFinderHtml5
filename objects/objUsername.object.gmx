@@ -3,8 +3,8 @@
   <spriteName>&lt;undefined&gt;</spriteName>
   <solid>0</solid>
   <visible>-1</visible>
-  <depth>-3</depth>
-  <persistent>-1</persistent>
+  <depth>0</depth>
+  <persistent>0</persistent>
   <parentName>&lt;undefined&gt;</parentName>
   <maskName>&lt;undefined&gt;</maskName>
   <events>
@@ -25,78 +25,21 @@
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>global.number = -1;
-global.labelText = "";
-global._score = 0;
-global.game_start = false;
-//x=192;
-//y=32;
-
-//Timer:
-centiSecs = 6000; //1 min timer
-
-</string>
-          </argument>
-        </arguments>
-      </action>
-    </event>
-    <event eventtype="3" enumb="0">
-      <action>
-        <libid>1</libid>
-        <id>603</id>
-        <kind>7</kind>
-        <userelative>0</userelative>
-        <isquestion>0</isquestion>
-        <useapplyto>-1</useapplyto>
-        <exetype>2</exetype>
-        <functionname></functionname>
-        <codestring></codestring>
-        <whoName>other</whoName>
-        <relative>0</relative>
-        <isnot>0</isnot>
-        <arguments>
-          <argument>
-            <kind>1</kind>
-            <string>if keyboard_check(vk_backspace){
-    game_end();
-}
-switch(room){
-    case 0: //rmOP
-        //Ask for initials / username
-        
-        break;
-    
-    case 1: //rmGame
-        //Timer:
-        //Note: this appeared 3x too slow @ 30fps in IE
-        if (global.game_start) {
-            if (centiSecs &gt; 0){
-                centiSecs-=(delta_time*0.000001)*room_speed*1.63; //dividing by 1 million
-            }else{
-                if !instance_exists(objLogScore){
-                    instance_create(752,304,objLogScore);
-                }
-            }
-        }
-        
-        if mouse_check_button_pressed(mb_left){
-            if !(instance_exists(objMouse)){
-                instance_create(mouse_x,mouse_y,objMouse);
-            }
-        }else{
-            with(objMouse){instance_destroy();}
-        }
-        break;       
-}
-
-
+            <string>text = "";
+enabled_keys = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+draw_set_font(fnt_main);
+blink = true; //if the cursor is being displayed
+blink_speed = 15;
+alarm[0] = blink_speed;
+charNo = 0;
+leavingScreen = false;
 
 </string>
           </argument>
         </arguments>
       </action>
     </event>
-    <event eventtype="7" enumb="2">
+    <event eventtype="2" enumb="1">
       <action>
         <libid>1</libid>
         <id>603</id>
@@ -113,7 +56,58 @@ switch(room){
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>global.userName = "INVALID";
+            <string>///Go To Next Room
+room_goto(room_next(room));
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="2" enumb="0">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>blink = !blink;
+alarm[0] = blink_speed;
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="7" enumb="10">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>///save userName and set timer for room transition
+blink_speed = 10;
+global.userName = text;
+alarm[1] = 2*room_speed;
 </string>
           </argument>
         </arguments>
@@ -136,42 +130,65 @@ switch(room){
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>
-draw_set_alpha(1);
-draw_set_colour(c_black);
-switch(room){
-    case 0: //rmOP
-        draw_text(x,y,"Type Your Initials and Press Enter");
-        break;
+            <string>if charNo &gt;= 3 { draw_set_colour(c_purple);}
+if (charNo &lt; 4 || blink){
+    draw_text(x,y,text);
+}
+
+if blink {   
+    var length = string_width(text);
+    var height = string_height(text);
     
-    case 1: //rmGame
-        if (centiSecs &gt; 0){
-            if (global.number&gt;0){
-                draw_text(x+16,y,string(global.number));
-            }else{
-                draw_text(x-40,y,"Click To Begin");
-            }
-        }else{
-            if (global._score == 0){
-                draw_text(x+16,y,"...");
-            }else if (global._score &lt; 20){
-                draw_text(x+16,y,"Try Again");
-            }else{
-                draw_text(x-4,y,"Well Played");
-            }
+    draw_line(x+length,y,x+length,y+height);
+}
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="9" enumb="1">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>if (charNo &lt; 4){ //if we already committed to 3 letters, don't alter them
+    if (charNo &lt; 3){
+        if (string_count(chr(keyboard_key),enabled_keys) &amp;&amp; string_length(chr(keyboard_key)) == 1){
+            text += string_upper(keyboard_lastchar); //capital only
+            charNo+=1;
+            blink = true;
+            alarm[0] = blink_speed;
         }
-        
-        //draw_text(768,192,global.labelText);
-        
-        //Timer:
-        if (global.game_start){
-            if (centiSecs &gt; 0){
-                draw_text(796,218,string(centiSecs div 6000) + ":" + string((centiSecs mod 6000) div 100) + ":" +string(floor(centiSecs mod 100)));
-            }else{
-                draw_text(772,218,"Score:" + string(global._score));
-            }
+    }
+    
+    if !keyboard_check(vk_control){
+        switch(keyboard_key){
+            case vk_backspace:
+                text = string_copy(text,0,string_length(text)-1);
+                charNo-=1;
+                break;
+            case vk_enter:
+                if (charNo == 3){
+                    event_user(0);
+                    charNo = 4; //only call user defined 0 once
+                }
+                break;
+            default:
+                break;
         }
-        break;
+    }
 }
 </string>
           </argument>

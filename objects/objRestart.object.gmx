@@ -26,7 +26,28 @@
           <argument>
             <kind>1</kind>
             <string>if (place_meeting(x,y,objMouse)){
-    game_restart();
+//    room_restart();
+
+//From objControl's create event
+global.number = -1;
+global.labelText = "";
+global._score = 0;
+global.game_start = false;
+//x=192;
+//y=32;
+
+if instance_exists(objArea){
+    objArea.x=256;
+    objArea.y=48;
+}
+
+//destroy object(s):
+if (instance_exists(objLogScore)){
+    with (objLogScore){instance_destroy();}
+}
+
+//Timer:
+objControl.centiSecs = 6000; //1 min timer
 }
 </string>
           </argument>

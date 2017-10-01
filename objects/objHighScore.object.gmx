@@ -3,8 +3,8 @@
   <spriteName>&lt;undefined&gt;</spriteName>
   <solid>0</solid>
   <visible>-1</visible>
-  <depth>-3</depth>
-  <persistent>-1</persistent>
+  <depth>0</depth>
+  <persistent>0</persistent>
   <parentName>&lt;undefined&gt;</parentName>
   <maskName>&lt;undefined&gt;</maskName>
   <events>
@@ -25,78 +25,18 @@
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>global.number = -1;
-global.labelText = "";
-global._score = 0;
-global.game_start = false;
-//x=192;
-//y=32;
-
-//Timer:
-centiSecs = 6000; //1 min timer
-
+            <string>/// Initialise loading the online highscores
+player_name = global.userName;
+get_scores(player_name,10);
+text = "Please wait for the highscores to load...";
+text2 = "";
+alarm[1] = room_speed;
 </string>
           </argument>
         </arguments>
       </action>
     </event>
-    <event eventtype="3" enumb="0">
-      <action>
-        <libid>1</libid>
-        <id>603</id>
-        <kind>7</kind>
-        <userelative>0</userelative>
-        <isquestion>0</isquestion>
-        <useapplyto>-1</useapplyto>
-        <exetype>2</exetype>
-        <functionname></functionname>
-        <codestring></codestring>
-        <whoName>other</whoName>
-        <relative>0</relative>
-        <isnot>0</isnot>
-        <arguments>
-          <argument>
-            <kind>1</kind>
-            <string>if keyboard_check(vk_backspace){
-    game_end();
-}
-switch(room){
-    case 0: //rmOP
-        //Ask for initials / username
-        
-        break;
-    
-    case 1: //rmGame
-        //Timer:
-        //Note: this appeared 3x too slow @ 30fps in IE
-        if (global.game_start) {
-            if (centiSecs &gt; 0){
-                centiSecs-=(delta_time*0.000001)*room_speed*1.63; //dividing by 1 million
-            }else{
-                if !instance_exists(objLogScore){
-                    instance_create(752,304,objLogScore);
-                }
-            }
-        }
-        
-        if mouse_check_button_pressed(mb_left){
-            if !(instance_exists(objMouse)){
-                instance_create(mouse_x,mouse_y,objMouse);
-            }
-        }else{
-            with(objMouse){instance_destroy();}
-        }
-        break;       
-}
-
-
-
-</string>
-          </argument>
-        </arguments>
-      </action>
-    </event>
-    <event eventtype="7" enumb="2">
+    <event eventtype="2" enumb="1">
       <action>
         <libid>1</libid>
         <id>603</id>
@@ -113,7 +53,54 @@ switch(room){
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>global.userName = "INVALID";
+            <string>/// When the scores haven’t loaded, try again once per second
+if text2 == ""
+{
+    get_scores(player_name,10);
+    text = "Please check your internet connection...";
+    alarm[1] = room_speed;
+}
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="7" enumb="62">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Receiving the result from Altervista
+if ds_map_find_value(async_load, "id") == texthandle
+{
+    if ds_map_find_value(async_load, "status") == 0
+    {
+        text2 = string(ds_map_find_value(async_load, "result"));
+        show_debug_message(text2);
+        if text2 == "IOException" or text2 == ""
+        {
+            text = "Please check your internet connection...";
+            text2 = "";
+        }
+        else
+        {
+            text = "Ready";
+            alarm[1] = -1;
+        }
+    }
+}
 </string>
           </argument>
         </arguments>
@@ -136,43 +123,51 @@ switch(room){
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>
-draw_set_alpha(1);
-draw_set_colour(c_black);
-switch(room){
-    case 0: //rmOP
-        draw_text(x,y,"Type Your Initials and Press Enter");
-        break;
-    
-    case 1: //rmGame
-        if (centiSecs &gt; 0){
-            if (global.number&gt;0){
-                draw_text(x+16,y,string(global.number));
-            }else{
-                draw_text(x-40,y,"Click To Begin");
-            }
-        }else{
-            if (global._score == 0){
-                draw_text(x+16,y,"...");
-            }else if (global._score &lt; 20){
-                draw_text(x+16,y,"Try Again");
-            }else{
-                draw_text(x-4,y,"Well Played");
-            }
-        }
-        
-        //draw_text(768,192,global.labelText);
-        
-        //Timer:
-        if (global.game_start){
-            if (centiSecs &gt; 0){
-                draw_text(796,218,string(centiSecs div 6000) + ":" + string((centiSecs mod 6000) div 100) + ":" +string(floor(centiSecs mod 100)));
-            }else{
-                draw_text(772,218,"Score:" + string(global._score));
-            }
-        }
-        break;
+            <string>/// Drawing the highscores if available
+draw_set_color(c_black);
+if text == "Ready"
+{
+    draw_text_highscore(room_width/2-110, 50, "", "Name", "Score", string(text2), player_name, c_green);
 }
+else
+{
+    draw_text(room_width/2-110, 50, text);
+}
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="9" enumb="1">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>///Go To Game Room
+room_goto(1);
+//From objControl's create event
+global.number = -1;
+global.labelText = "";
+global._score = 0;
+global.game_start = false;
+if instance_exists(objArea){
+    objArea.x=256;
+    objArea.y=48;
+}
+//Timer:
+objControl.centiSecs = 6000; //1 min timer
 </string>
           </argument>
         </arguments>

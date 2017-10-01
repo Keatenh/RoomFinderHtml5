@@ -9,6 +9,7 @@
     <sprite>sprites\sprArea1</sprite>
     <sprite>sprites\sprCheckMark</sprite>
     <sprite>sprites\sprRestartButton</sprite>
+    <sprite>sprites\sprLogScore</sprite>
   </sprites>
   <backgrounds name="background">
     <background>background\bkVUH</background>
@@ -18,15 +19,28 @@
   <scripts name="scripts">
     <script>scripts\createNewNumber.gml</script>
     <script>scripts\extractFirstAndSecondDigits.gml</script>
+    <script>scripts\send_score.gml</script>
+    <script>scripts\url_encode.gml</script>
+    <script>scripts\get_scores.gml</script>
+    <script>scripts\draw_text_highscore.gml</script>
+    <script>scripts\string_split.gml</script>
   </scripts>
+  <fonts name="fonts">
+    <font>fonts\fnt_main</font>
+  </fonts>
   <objects name="objects">
     <object>objects\objControl</object>
     <object>objects\objArea</object>
     <object>objects\objMouse</object>
     <object>objects\objRestart</object>
+    <object>objects\objHighScore</object>
+    <object>objects\objUsername</object>
+    <object>objects\objLogScore</object>
   </objects>
   <rooms name="rooms">
-    <room>rooms\room0</room>
+    <room>rooms\rmOP</room>
+    <room>rooms\rmGame</room>
+    <room>rooms\rmScore</room>
   </rooms>
   <help>
     <rtf>help.rtf</rtf>
