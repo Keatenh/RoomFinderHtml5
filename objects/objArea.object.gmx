@@ -130,6 +130,7 @@ if (!global.game_start){
 }
 
 image_alpha -= (1/(2*60)); //fade over 2 seconds
+if (image_alpha &lt;= 0){ image_alpha = 0;} //added to stop alpha resetting in Chrome
 </string>
           </argument>
         </arguments>
