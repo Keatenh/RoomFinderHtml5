@@ -9,5 +9,5 @@
 // Argument1: the achieved score
 
 var name = url_encode(base64_encode(string(argument0)));
-var args = "name="+name+"&score="+string(argument1)+"&hash=1134";
+var args = "name="+name+"&score="+string(argument1)+"&hash=INSERT HASH HERE";
 http_post_string("http://ftp.badmilk.altervista.org/RoomFinder/addscore.php", args);

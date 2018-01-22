@@ -9,5 +9,5 @@
 // Argument1: the number of scores you want to display (generally 10 is fine)
 
 var name = url_encode(base64_encode(string(argument0)));
-var args = "name="+name+"&no_lines="+string(argument1)+"&hash=1134";
+var args = "name="+name+"&no_lines="+string(argument1)+"&hash=INSERT HASH HERE";
 texthandle = http_post_string("http://ftp.badmilk.altervista.org/RoomFinder/display.php", args);
